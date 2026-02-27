@@ -1,9 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 
-// We will require the user to paste their RESEND_API_KEY in .env.local
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: Request) {
     try {
         const body = await request.json();
@@ -12,6 +9,14 @@ export async function POST(request: Request) {
         if (!lead || !lead.email || !quoteDetails || !quoteDetails.quoteUrl) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
+
+        const resendApiKey = process.env.RESEND_API_KEY;
+        if (!resendApiKey) {
+            console.error('Missing RESEND_API_KEY configuration');
+            return NextResponse.json({ error: 'Mail server configuration missing' }, { status: 500 });
+        }
+
+        const resend = new Resend(resendApiKey);
 
         // For testing without a verified domain, we must use the sandbox email
         const data = await resend.emails.send({
