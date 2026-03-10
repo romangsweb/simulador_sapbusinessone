@@ -1,5 +1,7 @@
 import WizardForm from '@/components/WizardForm';
 
+export const dynamic = 'force-dynamic';
+
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col relative w-full items-center justify-center p-4 py-12 md:py-24 overflow-x-hidden pt-20">
