@@ -55,7 +55,7 @@ export default function WizardForm() {
             setIsSubmitting(true);
             try {
                 // Background Sync to HubSpot CRM
-                fetch('/cotiza-sap-business-one/api/hubspot', {
+                fetch('https://sap-quotation-app-next.vercel.app/cotizador-sap-business-one/api/hubspot', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -65,7 +65,7 @@ export default function WizardForm() {
                 }).catch(e => console.error("HubSpot sync failed:", e));
 
                 // Foreground Dispatch to Prospect via Resend
-                const emailResponse = await fetch('/cotiza-sap-business-one/api/send-proposal', {
+                const emailResponse = await fetch('https://sap-quotation-app-next.vercel.app/cotizador-sap-business-one/api/send-proposal', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
