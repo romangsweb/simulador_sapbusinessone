@@ -70,6 +70,11 @@ export async function POST(request: Request) {
                         <li><strong>Solución:</strong> ${quoteDetails.solution}</li>
                         <li><strong>Industria:</strong> ${quoteDetails.industry}</li>
                     </ul>
+                    <div style="margin-top: 20px;">
+                        <a href="${quoteDetails.quoteUrl}" style="background-color: #3182ce; color: #ffffff; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">
+                            Ver Cotización Generada
+                        </a>
+                    </div>
                 </div>`
             });
         } catch (internalError) {
