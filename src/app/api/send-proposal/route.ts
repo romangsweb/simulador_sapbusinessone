@@ -18,9 +18,9 @@ export async function POST(request: Request) {
 
         const resend = new Resend(resendApiKey);
 
-        // For testing without a verified domain, we must use the sandbox email
+        // 1. Send proposal to the client using verified domain
         const data = await resend.emails.send({
-            from: 'Cecilia Rodríguez <onboarding@resend.dev>', // Temporario hasta que verifiques xamai en Resend
+            from: 'Cecilia Rodríguez <cecilia.rodriguez@xamai.com>',
             to: [lead.email],
             subject: `Tu cotización interactiva SAP para ${lead.company}`,
             html: `
@@ -46,16 +46,41 @@ export async function POST(request: Request) {
                     <p style="font-size: 12px; color: #718096; text-align: center;">
                         <strong>Cecilia Rodríguez</strong><br/>
                         SDR Leader | Xamai - Gold Partner SAP<br/>
-                        <a href="mailto:cecilia.rodriguez@xamai.com.mx" style="color: #4299E1;">cecilia.rodriguez@xamai.com.mx</a>
+                        <a href="mailto:cecilia.rodriguez@xamai.com" style="color: #4299E1;">cecilia.rodriguez@xamai.com</a>
                     </p>
                 </div>
             `
         });
 
+        // 2. Send internal copy to the team (separate call, error-isolated)
+        try {
+            await resend.emails.send({
+                from: 'Cecilia Rodríguez <cecilia.rodriguez@xamai.com>',
+                to: ['cecilia.rodriguez@scanda.com.mx', 'jessica.lopez@scanda.com.mx', 'roman.garcia@scanda.com.mx', 'karen.vera@scanda.com.mx'],
+                subject: `[Copia] Tu cotización interactiva SAP para ${lead.company}`,
+                html: `
+                <div style="font-family: Arial, sans-serif; background-color: #f8fafc; padding: 20px; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px;">
+                    <h3 style="color: #2b6cb0; margin-top: 0;">📋 Nueva Cotización Enviada</h3>
+                    <p style="color: #4a5568; margin-bottom: 10px;">Se ha enviado una cotización al siguiente prospecto:</p>
+                    <ul style="list-style-type: none; padding: 0; color: #2d3748;">
+                        <li><strong>Contacto:</strong> ${lead.firstName} ${lead.lastName || ''}</li>
+                        <li><strong>Email:</strong> <a href="mailto:${lead.email}">${lead.email}</a></li>
+                        ${lead.phone ? `<li><strong>Teléfono:</strong> ${lead.phone}</li>` : ''}
+                        <li><strong>Empresa:</strong> ${lead.company}</li>
+                        <li><strong>Solución:</strong> ${quoteDetails.solution}</li>
+                        <li><strong>Industria:</strong> ${quoteDetails.industry}</li>
+                    </ul>
+                </div>`
+            });
+        } catch (internalError) {
+            console.error('Internal copy failed (client email was sent):', internalError);
+        }
+
         return NextResponse.json({ success: true, data });
 
-    } catch (error: any) {
+    } catch (error) {
         console.error('Error sending email via Resend:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
     }
 }
+
