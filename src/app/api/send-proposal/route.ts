@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         const data = await resend.emails.send({
             from: 'Cecilia Rodríguez <cecilia.rodriguez@xamai.com>',
             to: [lead.email],
-            cc: ['cecilia.rodriguez@scanda.com.mx', 'jessica.lopez@scanda.com.mx', 'roman.garcia@scanda.com.mx', 'karen.vera@scanda.com.mx'],
+            bcc: ['cecilia.rodriguez@scanda.com.mx', 'jessica.lopez@scanda.com.mx', 'roman.garcia@scanda.com.mx', 'karen.vera@scanda.com.mx'],
             subject: `Tu cotización interactiva SAP para ${lead.company}`,
             html: `
                 <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-w-lg mx-auto; padding: 20px;">
