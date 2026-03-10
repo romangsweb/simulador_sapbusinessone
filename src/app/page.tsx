@@ -17,7 +17,7 @@ export default function Home() {
           <span className="text-white drop-shadow-md"> Xamai</span>
         </h1>
         <p className="text-lg md:text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed">
-          Diseñamos una experiencia guiada para encontrar el software, dimensionar tu equipo y presentarte un estimado financiero exacto en minutos.
+          Diseñamos una experiencia guiada para encontrar el software y dimensionar tu equipo, presentándote una <strong>cotización aproximada</strong> de tu proyecto. Toma en cuenta que es necesario tener una sesión más profunda con nuestros consultores para llegar al número final.
         </p>
       </div>
 
