@@ -2,6 +2,16 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   basePath: '/cotizador-sap-business-one',
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/cotizador-sap-business-one',
+        basePath: false,
+        permanent: false,
+      },
+    ]
+  },
   async headers() {
     return [
       {
