@@ -10,6 +10,12 @@ const nextConfig: NextConfig = {
         basePath: false,
         permanent: false,
       },
+      {
+        source: '/propuesta/:path*',
+        destination: '/cotizador-sap-business-one/propuesta/:path*',
+        basePath: false,
+        permanent: false,
+      },
     ]
   },
   async headers() {
