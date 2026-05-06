@@ -50,12 +50,12 @@ export default function WizardForm() {
             const payload = { lead, quote: result, solution, industry, proUsers, limitedUsers, legalEntities, proposalId, today };
             const b64 = btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
             const b64Safe = b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-            const quoteUrl = `${window.location.origin}/cotiza-sap-business-one/propuesta/${b64Safe}`;
+            const quoteUrl = `${window.location.origin}/propuesta/${b64Safe}`;
 
             setIsSubmitting(true);
             try {
                 // Background Sync to HubSpot CRM
-                fetch('https://sap-quotation-app-next.vercel.app/cotizador-sap-business-one/api/hubspot', {
+                fetch('/api/hubspot', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -65,7 +65,7 @@ export default function WizardForm() {
                 }).catch(e => console.error("HubSpot sync failed:", e));
 
                 // Foreground Dispatch to Prospect via Resend
-                const emailResponse = await fetch('https://sap-quotation-app-next.vercel.app/cotizador-sap-business-one/api/send-proposal', {
+                const emailResponse = await fetch('/api/send-proposal', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -151,7 +151,13 @@ export default function WizardForm() {
                             </div>
                             <div className="space-y-1">
                                 <label className="text-sm text-slate-300 font-medium flex items-center gap-2"><Mail className="w-4 h-4" /> Correo Laboral</label>
-                                <input required type="email" value={lead.email} onChange={e => setLead({ ...lead, email: e.target.value })} className="w-full bg-slate-900/50 border border-slate-700 rounded-lg p-3 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none" placeholder="ana@empresa.com" />
+                                <input required type="email" value={lead.email} onChange={e => setLead({ ...lead, email: e.target.value })} className={`w-full bg-slate-900/50 border rounded-lg p-3 text-white focus:ring-1 outline-none transition-colors ${lead.email && lead.email.split('@')[1]?.toLowerCase() === 'gmail.com' ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-700 focus:border-purple-500 focus:ring-purple-500'}`} placeholder="ana@empresa.com" />
+                                {lead.email && lead.email.split('@')[1]?.toLowerCase() === 'gmail.com' && (
+                                    <p className="text-xs text-red-400 mt-1">Por favor ingresa un correo corporativo (no se permite Gmail).</p>
+                                )}
+                                {lead.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email) && lead.email.includes('@') && lead.email.split('@')[1]?.toLowerCase() !== 'gmail.com' && (
+                                    <p className="text-xs text-yellow-400 mt-1">Por favor ingresa un formato de correo válido.</p>
+                                )}
                             </div>
                             <div className="space-y-1">
                                 <label className="text-sm text-slate-300 font-medium flex items-center gap-2"><Phone className="w-4 h-4" /> Teléfono</label>
@@ -318,7 +324,11 @@ export default function WizardForm() {
     };
 
     const isNextDisabled = () => {
-        if (step === 0) return !lead.firstName || !lead.lastName || !lead.email;
+        if (step === 0) {
+            const isValidEmailFormat = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(lead.email);
+            const isGmail = lead.email.split('@')[1]?.toLowerCase() === 'gmail.com';
+            return !lead.firstName || !lead.lastName || !lead.email || !isValidEmailFormat || isGmail;
+        }
         if (step === 1) return !lead.company || !lead.city;
         if (isSubmitting) return true;
         return false;

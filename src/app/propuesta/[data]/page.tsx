@@ -29,7 +29,7 @@ export default function ProposalPage(props: { params: Promise<{ data: string }> 
             setDocumentProps(decodedProps);
 
             // Trigger silent tracking ping to /api/hubspot (or a future tracking endpoint)
-            fetch('https://sap-quotation-app-next.vercel.app/cotizador-sap-business-one/api/hubspot', {
+            fetch('/api/hubspot', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -42,7 +42,7 @@ export default function ProposalPage(props: { params: Promise<{ data: string }> 
             }).catch((err) => console.log('Tracking error (ignored):', err));
 
             // Trigger Slack alert
-            fetch('https://sap-quotation-app-next.vercel.app/cotizador-sap-business-one/api/slack', {
+            fetch('/api/slack', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
